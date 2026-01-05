@@ -1,0 +1,43 @@
+{% extends 'viewflow/workflow/task_base.html' %}
+{% load i18n viewflow workflow %}
+
+{% block breadcrumbs_items %}
+  {{ block.super }}
+  <a>{% trans 'Assign' %}</a>
+{% endblock %}
+
+{% block task_actions %}
+  <vf-form>
+    <form class="vf-form" method="POST" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+      {% csrf_token %}
+
+      <!-- 调试信息 -->
+      <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; display: none;"> <!-- 调试完成后可以隐藏 -->
+        <h4>调试信息:</h4>
+        <p>表单字段: {{ form.fields.keys }}</p>
+      </div>
+
+      <!-- 渲染整个表单 -->
+      <div class="mdc-layout-grid">
+        <div class="mdc-layout-grid__inner">
+          <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+            {{ form.as_p }}
+          </div>
+        </div>
+      </div>
+
+      <button class="mdc-button mdc-card__action mdc-card__action--button mdc-button--touch" name='_continue' value="1">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__touch"></span>
+        <span class="mdc-button__focus-ring"></span>
+        <span class="mdc-button__label">{% trans 'Assign and continue' %}</span>
+      </button>
+      <button class="mdc-button mdc-card__action mdc-card__action--button mdc-button--raised mdc-button--touch">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__touch"></span>
+        <span class="mdc-button__focus-ring"></span>
+        <span class="mdc-button__label">{% trans 'Assign' %}</span>
+      </button>
+    </form>
+  </vf-form>
+{% endblock %}

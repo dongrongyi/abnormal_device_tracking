@@ -1,0 +1,25 @@
+{% extends "../base.html" %}
+
+{% block title %}回到产线 - 异常设备追踪系统{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card task-card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">回到产线</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

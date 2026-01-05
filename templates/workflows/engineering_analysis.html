@@ -1,0 +1,117 @@
+{% extends "../base.html" %}
+
+{% block title %}工程团队分析 - 异常设备追踪系统{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- 原有按钮卡片 -->
+        <div class="card task-card mb-4">  <!-- 增加mb-4和下方卡片分隔 -->
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">工程团队分析</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" data-turbo="false">
+                    {% csrf_token %}
+                    <div class="text-right">
+                        <input type="hidden" name="source" value="choices"/>
+                        <input type="submit" name="action" value="上传操作记录" class="btn btn-outline-primary" style="margin-right: 10px;">
+                        <input type="submit" name="action" value="上传分析结果/记录bug号" class="btn btn-outline-primary" style="margin-right: 10px;">
+                        <input type="submit" name="action" value="确认" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 操作记录展示区域 -->
+        <div class="card task-card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">操作记录</h5>
+            </div>
+            <div class="card-body">
+                {% if operationRecords %}
+                    <div class="table-responsive">  <!-- 响应式表格，适配小屏幕 -->
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <!-- 可根据你的OperationRecord模型字段调整表头 -->
+                                    <th>操作动作</th>
+                                    <th>操作人</th>
+                                    <th>附件</th>
+                                    <th>创建时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in operationRecords %}
+                                    <tr>
+                                        <td>{{ record.action }}</td>
+                                        <td>{{ record.number.name|default:record.number.number }}</td>  <!-- 优先显示姓名，无则显示工号 -->
+                                        <td>
+                                            {% if record.attachment %}
+                                                <a href="{{ record.attachment.url }}" target="_blank" class="text-primary">查看附件</a>
+                                            {% else %}
+                                                无
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ record.created_at|date:"Y-m-d H:i:s" }}</td>  <!-- 格式化时间 -->
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-muted text-center py-3">暂无操作记录</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 分析结果展示区域 -->
+        <div class="card task-card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">分析结果</h5>
+            </div>
+            <div class="card-body">
+                {% if analysisResults %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <!-- 可根据你的AnalysisResults模型字段调整表头 -->
+                                    <th>Bug号</th>
+                                    <th>关联操作</th>
+                                    <th>问题是否解决</th>
+                                    <th>分析备注</th>
+                                    <th>操作人</th>
+                                    <th>创建时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in analysisResults %}
+                                    <tr>
+                                        <td>{{ bug.bug_number|default:"无" }}</td>
+                                        <td>{{ result.operation.action|default:"无" }}</td>  <!-- 关联操作记录的动作 -->
+                                        <td>
+                                            {% if result.result == True %}
+                                                <span class="badge bg-success">已解决（pass）</span>
+                                            {% elif result.result == False %}
+                                                <span class="badge bg-danger">未解决（fail）</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">暂不确定</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ result.analysis_notes|default:"无"|truncatechars:50 }}</td>  <!-- 截断长文本 -->
+                                        <td>{{ result.number.name|default:result.number.number }}</td>
+                                        <td>{{ result.created_at|date:"Y-m-d H:i:s" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-muted text-center py-3">暂无分析结果</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

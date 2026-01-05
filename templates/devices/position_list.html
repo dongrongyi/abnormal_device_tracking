@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}位置跟踪记录列表{% endblock %}
+{% block content %}
+<style>
+    /* 1. 禁用按钮样式增强（适配AdminLTE） */
+    .btn:disabled {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+    /* 2. 悬浮提示优化 */
+    .btn[title] {
+        position: relative;
+        z-index: 10;
+    }
+    /* 3. 表格样式微调 */
+    .table td, .table th {
+        vertical-align: middle;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">位置跟踪记录列表</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="position_list" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>设备SN</th>
+                    <th>负责人</th>
+                    <th>位置信息</th>
+                    <th>创建时间</th>
+                    <th>原因说明</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in positions %}
+                <tr>
+                    <td>{{ position.device.sn|default:"-" }}</td>
+                    <td>{{ position.owner.username|default:"-" }}（{{ position.owner.number|default:"无工号" }}）</td>
+                    <td>{{ position.position|default:"-" }}</td>
+                    <td>{{ position.created_at|date:"Y-m-d H:i:s"|default:"-" }}</td>
+                    <td>{{ position.reason|default:"-" }}</td>
+                    <!-- 操作列：仅根据messages判断禁用+悬浮提示 -->
+                    <td>
+                        {% if messages %}
+                            <!-- 有messages（dispatch中权限不足）：禁用按钮 + 悬浮提示 -->
+                            <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    disabled
+                                    title="{% for msg in messages %}{{ msg }}{% endfor %}">
+                                编辑
+                            </button>
+                        {% else %}
+                            <!-- 无messages（有权限）：按钮正常可用 -->
+                            <a href="{% url 'devices:position_change' position.device.pk position.pk %}"
+                               class="btn btn-sm btn-primary">
+                                编辑
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">暂无位置跟踪记录</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+
+<!-- DataTables 初始化脚本 -->
+<script>
+    $(document).ready(function() {
+        // 初始化DataTables
+        var table = $('#position_list').DataTable({
+            "destroy": true,
+            "paging": true,
+            "searching": true,
+            "info": true,
+            "ordering": true,
+            "autoWidth": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-CN.json"
+            },
+            "order": [[3, "desc"]] // 按创建时间降序
+        });
+
+        // 可选：Bootstrap Tooltip增强悬浮提示（无需可删）
+        $('[title]').tooltip({
+            placement: 'top',
+            trigger: 'hover',
+            delay: { show: 100, hide: 500 }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% load static %}
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #607d8b">
+    <!-- Brand Logo -->
+    <a href="{% url 'index' %}" class="brand-link">
+        <img src="{% static 'img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">异常设备追踪系统</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="{% static 'img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">
+                    {% if user.is_authenticated %}
+                        {{ user.username }}
+                    {% else %}
+                        访客
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+
+        <!-- SidebarSearch Form -->
+        <div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="搜索..." aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+                <!-- 设备管理 -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-laptop"></i>
+                        <p>
+                            设备管理
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'devices:device_list' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>设备列表</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'devices:position_create' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>设备位置更新</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Bug管理 -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-project-diagram"></i>
+                        <p>
+                            Bug管理
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'problem_group:bug_list' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Bug列表</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'problem_group:bug_create' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>新增Bug</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 异常设备处理流程 -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <p>
+                            异常设备处理流程
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'process_list' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>process列表</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'deviceinvestigation:index' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>process处理页</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'deviceinvestigation:start:execute' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>新增process</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <!-- 数据面板 -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <p>
+                            数据面板
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>数据统计</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>数据导出</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 系统管理（仅管理员可见） -->
+                {% if user.is_staff %}
+                <li class="nav-header">系统管理</li>
+                <li class="nav-item">
+                    <a href="{% url 'admin:index' %}" class="nav-link">
+                        <i class="nav-icon fas fa-cogs"></i>
+                        <p>后台管理</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>用户管理</p>
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- 个人设置 -->
+                <li class="nav-header">个人设置</li>
+                <li class="nav-item">
+                    <a href="{% url 'accounts:update_password' %}" class="nav-link">
+                        <i class="nav-icon fas fa-key"></i>
+                        <p>修改密码</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user-cog"></i>
+                        <p>个人资料</p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,46 @@
+{% extends "../base.html" %}
+
+{% block title %}process_list - 异常设备追踪系统{% endblock %}
+
+{% block content %}
+<div class="mdc-layout-grid vf-page__grid">
+  <div class="mdc-layout-grid__inner vf-page__grid-inner">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+      <div class="mdc-card vf-card">
+        <section class="vf-card__header">
+          <h1 class="vf-card__title">Archive</h1>
+        </section>
+
+        <section>
+          <table class="vf-list__table">
+            <thead>
+              <tr>
+                <th class="vf-list__table-header vf-list__table-header-text">#</th>
+                <th class="vf-list__table-header vf-list__table-header-text">Brief</th>
+                <th class="vf-list__table-header vf-list__table-header-text">Created</th>
+                <th class="vf-list__table-header vf-list__table-header-text">Finished</th>
+                <th class="vf-list__table-header vf-list__table-header-text">Process summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for process in object_list %}
+                <tr>
+                  <td>{{ process.id }}</td>
+                  <td>{{ process }}</td>
+                  <td>{{ process.created }}</td>
+                  <td>{{ process.finished }}</td>
+                  <td>{{ process.flow_class }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="5">No processes found.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

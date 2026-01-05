@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}异常设备追踪系统{% endblock %}</title>
+
+  <!-- CSS 文件 -->
+  <link rel="stylesheet" href="{% static 'font/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'font/font.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/buttons.bootstrap4.min.css' %}">
+
+  <!-- JS 文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<!--  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>-->
+  <script src="{% static 'js/adminlte.min.js' %}"></script>
+  <script src="{% static 'plugins/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'plugins/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'plugins/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/jszip.min.js' %}"></script>
+  <script src="{% static 'plugins/pdfmake.min.js' %}"></script>
+  <script src="{% static 'plugins/vfs_fonts.js' %}"></script>
+  <script src="{% static 'plugins/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'plugins/buttons.print.min.js' %}"></script>
+  <script src="{% static 'plugins/buttons.colVis.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+
+    <!-- 导航栏 -->
+    {% include 'includes/navbar.html' %}
+
+    <!-- 侧边栏 -->
+    {% include 'includes/sidebar.html' %}
+
+    <!-- 内容区域 -->
+    <div class="content-wrapper">
+      <!-- 内容头部 -->
+      {% block content_header %}
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">{% block page_title %}{% endblock %}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endblock %}
+
+
+      <!-- 主要内容 -->
+      <section class="content">
+        <div class="container-fluid">
+          {% block content_layout %}
+          <div class="row">
+            <div class="col-12">
+              {% block content %}{% endblock %}
+            </div>
+          </div>
+          {% endblock %}
+        </div>
+      </section>
+    </div>
+
+
+
+    <!-- 页脚 -->
+    <footer class="main-footer">
+      <div class="float-right d-none d-sm-block">version 1.0</div>
+      <strong>异常设备追踪系统 2025@kyra</strong>
+    </footer>
+  </div>
+</body>
+</html>

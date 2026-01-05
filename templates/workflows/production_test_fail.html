@@ -1,0 +1,24 @@
+<!-- workflows/templates/workflows/device_investigation/production_test_fail.html -->
+{% extends "../base.html" %}
+{% load group_filters %}
+{% block title %}产线测试 - 异常设备追踪系统{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+   <div class="col-md-8">
+      <div class="card task-card">
+         <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">产线测试</h5>
+         </div>
+         <div class="card-body">
+            <!-- 员工提交数据表单 -->
+            <!-- 因为 <form> 标签没有显式指定 action 属性，HTML 规范中 <form> 的 action 缺省值为当前页面的 URL（浏览器地址栏显示的 URL）-->
+            <form method="POST">
+               {% csrf_token %}
+               {{ form.as_p }}
+               <button type="submit" class="btn btn-primary">提交数据</button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock %}

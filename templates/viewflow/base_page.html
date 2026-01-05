@@ -1,0 +1,100 @@
+{% extends 'viewflow/base.html' %}{% load i18n viewflow static %}
+
+{% block body %}
+<link rel="stylesheet" href="{% static 'font/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'font/font.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/buttons.bootstrap4.min.css' %}">
+
+<style>
+
+  /* 核心：先重置盒模型，防止padding/border影响宽度计算 */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* 1. 去掉Viewflow容器默认内边距，禁止页面横向滚动 */
+  body, html {
+    overflow-x: hidden !important; /* 解决右侧空白的关键：禁止横向滚动 */
+  }
+  .vf-page__body.mdc-drawer-app-content {
+    padding-left: 0 !important;
+    width: 100% !important; /* 限定根容器宽度为视口宽度 */
+  }
+
+  /* 2. 顶栏样式：默认预留侧边栏宽度，收起时归零 */
+  .main-header {
+    width: 100% !important;
+    margin-left: 250px !important; /* 默认适配侧边栏 */
+    transition: margin-left 0.3s ease;
+  }
+
+  /* 3. 内容区核心调整：宽度=视口宽度-侧边栏宽度，避免溢出 */
+  .vf-page__content {
+    margin-left: 250px !important; /* 避开侧边栏 */
+    width: calc(100% - 250px) !important; /* 关键：总宽度=100%-250px，不超视口 */
+    transition: all 0.3s ease; /* 展开/收起时平滑过渡 */
+    padding: 6px;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* 4. 侧边栏收起时，顶栏和内容区适配 */
+  .sidebar-collapse .main-header {
+    margin-left: 0 !important;
+  }
+  .sidebar-collapse .vf-page__content {
+    margin-left: 0 !important;
+    width: 100% !important; /* 收起后内容区占满视口 */
+  }
+
+  /* 兼容AdminLTE的sidebar-mini模式 */
+  .sidebar-mini.sidebar-collapse .main-header {
+    margin-left: 0 !important;
+  }
+  .sidebar-mini.sidebar-collapse .vf-page__content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+</style>
+
+
+  <vf-page-scroll-fix></vf-page-scroll-fix>
+  <vf-page class="vf-page">
+    {% block page-menu %}{% if site and user.is_authenticated %}
+        {% include 'includes/sidebar.html' %}
+    {% endif %}{% endblock page-menu %}
+    {% block page-body %}
+      <div class="vf-page__body mdc-drawer-app-content">
+        {% block page-toolbar %}
+          {% include 'includes/navbar.html' %}
+        {% endblock %}
+        {% block page-content %}
+          <main class="vf-page__content">
+            {% block content %}
+              <div class="mdc-list-item" style="height:auto; color: red; background:white; padding: 20px; margin: 20px; width: 100%">
+                <small>To place content here override {% templatetag  openblock %} block content {% templatetag  closeblock %} in your template</small>
+              </div>
+
+            {% endblock %}
+          </main>
+        {% endblock %}
+      </div>
+    {% endblock page-body %}
+  </vf-page>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+  <script src="{% static 'js/adminlte.min.js' %}"></script>
+  <script src="{% static 'plugins/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'plugins/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'plugins/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/jszip.min.js' %}"></script>
+  <script src="{% static 'plugins/pdfmake.min.js' %}"></script>
+  <script src="{% static 'plugins/vfs_fonts.js' %}"></script>
+  <script src="{% static 'plugins/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'plugins/buttons.print.min.js' %}"></script>
+  <script src="{% static 'plugins/buttons.colVis.min.js' %}"></script>
+{% endblock %}
