@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}设备列表{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">bug列表</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="bug_list" class="table table-bordered table-striped">
+            <thead>
+        <tr>
+            <th>bug号</th>
+            <th>title</th>
+            <th>描述</th>
+            <th>status</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in bugs %}
+        <tr>
+            <td>{{ item.bug_number }}</td>
+            <td>{{ item.title|default:"-" }}</td>
+            <td>{{ item.description|default:"-" }}</td>
+            <td>{{ item.status|default:"-" }}</td>
+            <td>
+                <a href="{% url 'problem_group:bug_detail' item.pk %}" class="btn btn-sm btn-primary">
+                    查看详情
+                </a>
+                <a href="{% url 'problem_group:bug_update' item.pk %}" class="btn btn-sm btn-primary">
+                    编辑bug
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+<!-- 2. 底部添加 DataTables 初始化脚本 -->
+<script>
+    $(document).ready(function() {
+  // 关键：销毁之前的初始化，避免重复
+  var table = $('#bug_list').DataTable({
+    "destroy": true,  // 销毁之前的实例（防止重复初始化）
+    "paging": true,   // 启用分页（可根据需求关闭）
+    "searching": true, // 启用搜索框（可关闭：false）
+    "info": true      // 显示统计信息（可关闭：false）
+  });
+});
+</script>
+{% endblock %}

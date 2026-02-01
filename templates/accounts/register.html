@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}register{% endblock %}
+{% block content %}
+<div class="register-box">
+
+  <div class="card">
+    <div class="card-body register-card-body">
+      <p class="login-box-msg">Register a new membership</p>
+
+      <form action="{% url 'accounts:register' %}" method="post">
+          {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="请输入英文名" name="username">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+          <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="请输入邮箱地址" name="email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="请输入工号" name="number">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password" name="password1">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Retype password" name="password2">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+    <!-- 部门下拉框：模仿密码输入框的 input-group 结构 -->
+    <div class="input-group mb-3">
+      <!-- 核心：下拉框 select，保持 form-control 类和原结构样式一致 -->
+      <select class="form-control" name="department" id="department">
+        <!-- 默认选项：提示用户选择 -->
+        <option value="" selected disabled>Select department</option>
+        <!-- 循环渲染 departments 集合（Django 模板语法） -->
+        {% for dept in departments %}
+          <!-- value 绑定部门ID，显示部门名称（根据你的模型字段调整，比如 dept.name/dept.title） -->
+          <option value="{{ dept.id }}">{{ dept.name }}</option>
+        {% empty %}
+          <!-- 无数据时的兜底选项 -->
+          <option value="" disabled>No departments available</option>
+        {% endfor %}
+      </select>
+      <!-- 右侧图标按钮：和原密码框的 append 结构一致 -->
+      <div class="input-group-append">
+        <div class="input-group-text">
+          <!-- 部门相关图标（Font Awesome），替换原锁形图标 -->
+          <span class="fas fa-building"></span>
+        </div>
+      </div>
+    </div>
+
+          {% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.errors }}
+    </div>
+{% endif %}
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+              <label for="agreeTerms">
+               I agree to the <a href="#">terms</a>
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <div class="social-auth-links text-center">
+        <p>- OR -</p>
+        <a href="#" class="btn btn-block btn-primary">
+          <i class="fab fa-facebook mr-2"></i>
+          Sign up using Facebook
+        </a>
+        <a href="#" class="btn btn-block btn-danger">
+          <i class="fab fa-google-plus mr-2"></i>
+          Sign up using Google+
+        </a>
+      </div>
+
+      <a href="{% url 'accounts:login' %}" class="text-center">I already have a membership</a>
+    </div>
+    <!-- /.form-box -->
+  </div><!-- /.card -->
+</div>
+<!-- /.register-box -->
+{% endblock %}

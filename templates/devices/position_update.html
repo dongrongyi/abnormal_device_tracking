@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}编辑位置跟踪记录{% endblock %}
+{% block content %}
+<style>
+    /* 完全复用原有样式，保证视觉统一 */
+    .edit-card {
+        max-width: 1000px;
+        margin: 20px auto;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    .edit-title {
+        padding: 16px 20px;
+        border-bottom: 1px solid #eee;
+        font-size: 18px;
+        font-weight: 600;
+        background-color: #f8f9fa;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .edit-content {
+        padding: 20px;
+    }
+    .field-group {
+        margin-bottom: 24px;
+    }
+    .field-group-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        color: #212529;
+        border-left: 3px solid #0d6efd;
+        padding-left: 8px;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 6px;
+    }
+    /* 只读输入框样式优化 */
+    .form-control[readonly] {
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+        cursor: not-allowed;
+    }
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+        .edit-card {
+            margin: 10px;
+        }
+    }
+
+</style>
+
+<div class="container-fluid">
+    <!-- 位置跟踪记录编辑卡片 -->
+    <div class="edit-card border">
+        <div class="edit-title">
+            编辑位置跟踪记录 - {{ position.device.sn|default:"未知设备" }}
+        </div>
+        <div class="edit-content">
+            <!-- 表单提交：POST方法 + CSRF保护 -->
+            <form method="post" data-turbo="false" novalidate>
+                {% csrf_token %}
+
+                <!-- 基础信息分组 -->
+                <div class="field-group">
+                    <div class="field-group-title">基础信息</div>
+                    <!-- 设备（外键，只读，显示设备SN） -->
+                    <div class="mb-3">
+                        <label for="device" class="form-label">所属设备</label>
+                        <input type="text" class="form-control" id="device" name="device"
+                               value="{{ position.device.sn|default:'' }}" readonly>
+                        <div class="form-text text-muted">
+                            提示：设备信息不可修改
+                        </div>
+                    </div>
+                    <!-- 负责人（外键，可编辑，输入工号） -->
+                    <div class="mb-3">
+                        <label for="owner" class="form-label">负责人 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="owner" name="owner"
+                               value="{{ position.owner.number|default:'' }}" readonly>
+                    </div>
+                    <!-- 位置信息（可编辑） -->
+                    <div class="mb-3">
+                        <label for="position" class="form-label">位置信息</label>
+                        <input type="text" class="form-control" id="position" name="position"
+                               value="{{ position.position|default:'' }}" placeholder="请输入位置信息（最多150字）">
+                    </div>
+                </div>
+
+                <!-- 时间与原因分组 -->
+                <div class="field-group">
+                    <div class="field-group-title">时间与原因</div>
+                    <!-- 创建时间（只读，格式化显示） -->
+                    <div class="mb-3">
+                        <label for="created_at" class="form-label">创建时间</label>
+                        <input type="text" class="form-control" id="created_at" name="created_at"
+                               value="{{ position.created_at|date:'Y-m-d H:i:s'|default:'' }}" readonly>
+                        <div class="form-text text-muted">
+                            提示：创建时间由系统自动生成，不可修改
+                        </div>
+                    </div>
+                    <!-- 原因说明（可编辑） -->
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">原因说明</label>
+                        <input type="text" class="form-control" id="reason" name="reason"
+                               value="{{ position.reason|default:'' }}" placeholder="请输入原因说明（最多150字）">
+                    </div>
+                </div>
+
+                <!-- 表单操作按钮 -->
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                    <!-- 替换为你的位置跟踪记录详情页URL名称 -->
+                    <a href="{% url 'devices:position_tracking' position.device.pk %}" class="btn btn-outline-secondary">取消返回</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

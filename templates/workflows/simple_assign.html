@@ -1,0 +1,60 @@
+{% extends 'viewflow/workflow/base_page.html' %}
+
+{% block content %}
+<div class="mdc-layout-grid">
+  <div class="mdc-layout-grid__inner">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--span-8-tablet" style="margin: 0 auto;">
+      <div class="mdc-card vf-card" style="margin: 24px 0; padding: 0;">
+        <!-- 卡片标题区 -->
+        <section class="mdc-card__primary" style="padding: 32px 24px 16px 24px; border-bottom: 1px solid #e0e0e0;">
+          <h1 class="mdc-card__title mdc-typography--headline5" style="margin: 0 0 8px 0;">分配任务</h1>
+          <h2 class="mdc-card__subtitle mdc-typography--subtitle1" style="margin: 0; color: #666;">{{ task.flow_task.task_title }}</h2>
+        </section>
+
+        <!-- 任务信息区 -->
+        <section class="mdc-card__supporting-text" style="padding: 24px;">
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+              <span style="font-weight: 500; color: #666;">流程:</span>
+              <span style="color: #333;">{{ task.process_id }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+              <span style="font-weight: 500; color: #666;">创建时间:</span>
+              <span style="color: #333;">{{ task.created }}</span>
+            </div>
+            {% if task.owner %}
+            <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+              <span style="font-weight: 500; color: #666;">当前负责人:</span>
+              <span style="color: #333;">{{ task.owner.get_full_name|default:task.owner.username }}</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- 分配表单 -->
+          <form method="POST">
+            {% csrf_token %}
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">选择员工</label>
+              <select name="user_id" style="width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;" required>
+                <option value="">请选择员工</option>
+                {% for user in available_users %}
+                <option value="{{ user.id }}">{{ user.get_full_name|default:user.username }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+              <button type="submit" style="padding: 12px 24px; background: #1976d2; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">
+                分配任务
+              </button>
+              <a href="{% url 'deviceinvestigation:index' %}" style="padding: 12px 24px; background: #f5f5f5; color: #666; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; text-decoration: none; display: inline-flex; align-items: center;">
+                取消
+              </a>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

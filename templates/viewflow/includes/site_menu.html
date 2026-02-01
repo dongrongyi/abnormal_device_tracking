@@ -1,0 +1,40 @@
+{% load i18n viewflow %}
+<vf-page-menu-navigation class="mdc-list">
+  <div class="mdc-list-group">
+    <h3 class="vf-page__menu-subheader mdc-list-group__subheader">
+      {% trans 'Navigation' %}
+    </h3>
+
+    {% block back_link %}{% if site.parent %}{% reverse site.parent 'index' as parent_index %}{% if parent_index %}
+      <a class="mdc-list-item mdc-list-item--with-one-line mdc-list-item--with-leading-icon vf-page__menu-list-item" href=" ">
+        <i class="material-icons mdc-list-item__start">arrow_back</i>
+        <span class="mdc-list-item__content">{% trans 'Back' %}</span>
+      </a >
+    {% endif %}{% endif %}{% endblock %}
+
+    {% block app_links %}
+      {# 替换原有的空菜单为实际项目导航 #}
+      <a class="mdc-list-item mdc-list-item--with-one-line mdc-list-item--with-leading-icon vf-page__menu-list-item" href="/dashboard/">
+        <i class="material-icons mdc-list-item__start">dashboard</i>
+        <span class="mdc-list-item__content">{% trans 'Device Position' %}</span>
+      </a >
+
+      <a class="mdc-list-item mdc-list-item--with-one-line mdc-list-item--with-leading-icon vf-page__menu-list-item" href="/devices/">
+        <i class="material-icons mdc-list-item__start">devices</i>
+        <span class="mdc-list-item__content">{% trans 'Device Management' %}</span>
+      </a >
+
+      <a class="mdc-list-item mdc-list-item--with-one-line mdc-list-item--with-leading-icon vf-page__menu-list-item" href="/workflows/">
+        <i class="material-icons mdc-list-item__start">assignment</i>
+        <span class="mdc-list-item__content">{% trans 'Workflows' %}</span>
+      </a >
+
+      {% if request.user.is_staff %}
+      <a class="mdc-list-item mdc-list-item--with-one-line mdc-list-item--with-leading-icon vf-page__menu-list-item" href="/admin/">
+        <i class="material-icons mdc-list-item__start">settings</i>
+        <span class="mdc-list-item__content">{% trans 'System Admin' %}</span>
+      </a >
+      {% endif %}
+    {% endblock %}
+  </div>
+</vf-page-menu-navigation>

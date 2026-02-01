@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>聊天室</title>
+       <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 聊天室头部 */
+        .chat-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 消息显示区域 */
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%
+        }
+
+        /* 单个消息项 */
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+
+        /* 他人消息（左对齐） */
+        .message.other {
+            align-items: flex-start;
+        }
+
+        /* 自己消息（右对齐） */
+        .message.self {
+            align-items: flex-end;
+        }
+
+        /* 消息内容容器 */
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        /* 他人消息样式 */
+        .other .message-content {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+
+        /* 自己消息样式 */
+        .self .message-content {
+            background-color: #3498db;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* 消息元信息（用户名+时间） */
+        .message-meta {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .other .message-meta {
+            margin-left: 15px;
+        }
+
+        .self .message-meta {
+            margin-right: 15px;
+        }
+
+        /* 输入区域 */
+        .chat-input-area {
+            padding: 15px;
+            background-color: white;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* 输入容器 */
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* 用户名输入框 */
+        .username-input {
+            width: 120px;
+            padding: 8px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .username-input:focus {
+            border-color: #3498db;
+        }
+
+        /* 消息输入框 */
+        .message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+            resize: none;
+            height: 40px;
+            max-height: 120px;
+        }
+
+        .message-input:focus {
+            border-color: #3498db;
+        }
+
+        /* 发送按钮 */
+        .send-btn {
+            padding: 8px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .send-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 480px) {
+            .chat-container {
+                padding: 10px;
+            }
+
+            .username-input {
+                width: 80px;
+            }
+
+            .input-container {
+                gap: 5px;
+            }
+        }
+    </style>
+   </head>
+   <body class="hold-transition sidebar-mini layout-fixed">
+      <div class="wrapper">
+         <!-- Main content -->
+         <section class="content">
+               <!-- Main row -->
+                  <!-- 聊天室头部 -->
+                  <div class="chat-header">
+                      聊天室
+                  </div>
+
+                  <!-- 消息显示区域 -->
+                  <div class="chat-container" id="chatMessages">
+                      {% for mes in messages %}
+                      {% if mes.owner == user %}
+                      <div class="message self">
+                          <div class="message-content">
+                              {{ mes.content }}
+                          </div>
+                          <div class="message-meta">
+                              {{ mes.owner }}  {{ mes.created_at }}
+                          </div>
+                      </div>
+                      {% else %}
+                      <div class="message other">
+                          <div class="message-content">
+                              {{ mes.content }}
+                          </div>
+                          <div class="message-meta">
+                              {{ mes.owner }}  {{ mes.created_at }}
+                          </div>
+                      </div>
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+                  <br>
+                  <!-- 输入区域 -->
+                  <div class="chat-input-area">
+                      <div class="input-container">
+                          <textarea class="message-input" id="messageInput" placeholder="输入消息后按回车或点击发送..." spellcheck="false"></textarea>
+                          <button class="send-btn" id="messageSubmit">发送</button>
+                      </div>
+                  </div>
+         </section>
+         </div>
+         </div>
+         </section>
+
+      </div>
+      {{ chatroom.name|json_script:"name" }}
+      {{ user.username|json_script:"user_username" }}
+      {{ chatroom.id|json_script:"chatroom_id" }}
+      <script>
+         // 安全获取当前聊天室名称和当前登录用户（json_script+JSON.parse是 Django 中 “安全传递上下文数据到前端 JS” 的推荐方式）
+         const name = JSON.parse(document.getElementById('name').textContent);
+         const user_username = JSON.parse(document.getElementById('user_username').textContent);
+         const chatroom_id = JSON.parse(document.getElementById('chatroom_id').textContent);
+
+         // 建立 WebSocket 连接（实时通信的基础），发起与服务器的连接请求
+         const chatSocket = new WebSocket(
+             'ws://'
+             + window.location.host
+             + '/ws/chat/'
+             + name
+             + '/'
+         );
+         // 处理 WebSocket 连接意外关闭
+         chatSocket.onclose = function(e) {
+             console.error('Chat socket closed unexpectedly');
+         };
+
+         //输入框自动聚焦
+         document.querySelector('#messageInput').focus();
+         // 回车键触发“发送”按钮点击
+         document.querySelector('#messageInput').onkeyup = function(e) {
+             if (e.key === 'Enter') {  // enter, return
+                 document.querySelector('#messageSubmit').click();
+             }
+         };
+
+         // 发送消息到服务器（自己的消息怎么发出去）
+         document.querySelector('#messageSubmit').onclick = function(e) {
+             const messageInputDom = document.querySelector('#messageInput');
+             const message_content = messageInputDom.value;
+             chatSocket.send(JSON.stringify({
+                 'message_content': message_content,
+                 'chatroom_id':chatroom_id
+             }));  //WebSocket 的send()方法只能发送字符串，所以用JSON.stringify()把 “消息对象”（{ "message_content": "用户输入的内容" }）转成 JSON 字符串
+             messageInputDom.value = '';
+         };
+          // 接收服务器发送的消息（别人发的消息怎么显示）
+         chatSocket.onmessage = function(e) {
+             const data = JSON.parse(e.data);
+             const owner = data.message.owner
+             console.log(data.message,owner,"yyyyy")
+             displayMessage(data.message,owner);
+         };
+         // 把收到的消息展示在页面上
+        function displayMessage(message,owner_username) {
+            const chatMessages = document.getElementById('chatMessages');
+            console.log('chatMessages元素:', chatMessages);
+            console.log('message',message);
+            if (!message) return;
+            const messageElement = document.createElement('div');
+            if (user_username ==  owner_username) {
+                messageElement.className = 'message self';
+            } else {
+                messageElement.className = 'message other';
+            }
+            console.log('messageElement.className:',messageElement.className)
+            messageElement.innerHTML = `
+                <div class="message-content">${message.content}</div>
+                <div class="message-meta">${message.owner}  ${message.created_at}</div>
+            `;
+            console.log('messageElement元素:', messageElement);
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            messageInput.value = '';
+        }
+      </script>
+   </body>
+</html>

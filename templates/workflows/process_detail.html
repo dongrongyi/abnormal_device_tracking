@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% block title %}流程详情{% endblock %}
+{% block content %}
+    <style>
+        /* 继承原模板样式 + 新增折叠面板样式 */
+        .detail-card {
+            max-width: 1200px;
+            margin: 20px auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .detail-title {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .detail-content {
+            padding: 20px;
+        }
+        .field-group {
+            margin-bottom: 24px;
+        }
+        .field-group-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #212529;
+            border-left: 3px solid #0d6efd;
+            padding-left: 8px;
+        }
+        .field-row {
+            margin-bottom: 8px;
+        }
+        .field-label {
+            font-weight: 500;
+            color: #6c757d;
+            width: 120px;
+            display: inline-block;
+        }
+        .field-value {
+            color: #212529;
+        }
+        /* 核心信息表格样式 */
+        .core-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+        .core-info-table th, .core-info-table td {
+            padding: 12px 16px;
+            border: 1px solid #eee;
+            text-align: left;
+        }
+        .core-info-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            width: 120px;
+        }
+        /* 折叠面板样式 */
+        .node-collapse-card {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .node-collapse-header {
+            padding: 12px 16px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .node-collapse-header:hover {
+            background-color: #e9ecef;
+        }
+        .node-collapse-title {
+            font-weight: 500;
+            color: #212529;
+        }
+        .node-collapse-body {
+            padding: 16px;
+            border-top: 1px solid #eee;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .field-label {
+                display: block;
+                margin-bottom: 4px;
+            }
+            .detail-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .core-info-table th {
+                width: 100px;
+            }
+        }
+        /* 新增：循环项的容器样式 */
+    .loop-item {
+        width: 100%;
+        /* 每个循环项独立占一行，和原样式对齐 */
+        display: flex;
+        align-items: flex-start;
+        margin-top: 4px;
+    }
+    </style>
+    <div class="container-fluid">
+        <!-- 流程详情卡片 -->
+        <div class="detail-card border">
+            <!-- 标题区域：设备SN + 流程图链接 -->
+            <div class="detail-title">
+                <div>流程详情 - 关联设备：{{ process.device.sn|default:"未知设备" }}</div>
+                <a href="{% url 'deviceinvestigation:process_chart' process.pk %}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    查看流程图
+                </a>
+            </div>
+
+            <div class="detail-content">
+                <!-- 核心信息表格：当前节点、Owner、started、finished、status -->
+                <div class="field-group">
+                    <div class="field-group-title">流程核心信息</div>
+                    <table class="core-info-table">
+                        <thead>
+                            <tr>
+                                <th>当前节点</th>
+                                <th>Owner</th>
+                                <th>开始时间</th>
+                                <th>结束时间</th>
+                                <th>流程状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if tasks %}
+                                {% for task in tasks %}
+                                    <tr>
+                                        <td>{{ task.flow_task|default:"--" }}</td>
+                                        <td>{{ task.owner.username|default:"--" }}</td>
+                                        <td>{% if task.started %}{{ task.started|date:"Y-m-d H:i:s" }}{% else %}--{% endif %}</td>
+                                        <td>{% if task.finished %}{{ task.finished|date:"Y-m-d H:i:s" }}{% else %}--{% endif %}</td>
+                                        <td>{{ task.status|default:"--" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">暂无任务数据</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 各节点操作记录和分析结果（折叠面板） -->
+                <div class="field-group">
+                    <div class="field-group-title">节点操作记录</div>
+                    {% if tasks %}
+                        {% for task in data_tasks %}
+                            <!-- 每个task对应一个折叠面板 -->
+                            <div class="node-collapse-card">
+                                <!-- 折叠面板标题（点击展开/收起） -->
+                                <div class="node-collapse-header" data-bs-toggle="collapse" data-bs-target="#task-{{ task.id }}">
+                                    <span class="node-collapse-title">
+                                        {% if task.flow_task %}
+                                            （当前节点：{{ task.flow_task }}）
+                                        {% endif %}
+                                        <small class="text-muted">
+                                            {% if task.started %}({{ task.started|date:"Y-m-d H:i:s" }}){% endif %}
+                                        </small>
+                                    </span>
+                                    <span class="collapse-icon">▼</span>
+                                </div>
+                                <!-- 折叠面板内容：展示当前task的操作记录和分析结果 -->
+                                <div id="task-{{ task.id }}" class="collapse node-collapse-body">
+                                    <!-- 操作记录区域 -->
+                                    <div class="field-row">
+
+                                        {% for operation_record in task.get_operation_record %}
+                                            <div class="loop-item">
+                                                <span class="field-label">{% if forloop.first %}操作记录：{% else %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% endif %}</span>
+                                                <span class="field-value">{{ operation_record|default:"--" }}</span>
+                                            </div>
+                                        {% empty %}
+                                            <span class="field-label">操作记录：</span>
+                                            <span class="field-value">--</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <!-- 分析结果区域 -->
+                                    <div class="field-row">
+                                            <!-- 循环场景：每个分析结果独立成行 -->
+                                            {% for analysis_result in task.get_analysis_result %}
+                                                <div class="loop-item">
+                                                    <span class="field-label">{% if forloop.first %}分析结果：{% else %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% endif %}</span>
+                                                    <span class="field-value">{{ analysis_result|default:"--" }}</span>
+                                                </div>
+                                            {% empty %}
+                                                <span class="field-label">分析结果：</span>
+                                                <span class="field-value">--</span>
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-muted">暂无任务操作记录</div>
+                    {% endif %}
+                </div>
+
+                <!-- 返回/编辑按钮 -->
+                <div class="mt-4">
+                    <a href="{% url 'process_list' %}" class="btn btn-outline-secondary">返回流程列表</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 折叠面板交互脚本（依赖Bootstrap JS） -->
+    <script>
+        // 监听折叠面板状态，切换箭头图标
+        document.querySelectorAll('.node-collapse-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const icon = this.querySelector('.collapse-icon');
+                icon.textContent = icon.textContent === '▼' ? '▲' : '▼';
+            });
+        });
+    </script>
+{% endblock %}

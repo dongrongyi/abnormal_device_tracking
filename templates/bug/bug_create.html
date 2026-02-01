@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}创建Bug{% endblock %}
+{% block content %}
+<style>
+   /* 完全复用编辑页的样式，保证视觉统一 */
+   .edit-card {
+   max-width: 1000px;
+   margin: 20px auto;
+   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   border-radius: 8px;
+   }
+   .edit-title {
+   padding: 16px 20px;
+   border-bottom: 1px solid #eee;
+   font-size: 18px;
+   font-weight: 600;
+   background-color: #f8f9fa;
+   border-top-left-radius: 8px;
+   border-top-right-radius: 8px;
+   }
+   .edit-content {
+   padding: 20px;
+   }
+   .field-group {
+   margin-bottom: 24px;
+   }
+   .field-group-title {
+   font-size: 16px;
+   font-weight: 500;
+   margin-bottom: 12px;
+   color: #212529;
+   border-left: 3px solid #0d6efd;
+   padding-left: 8px;
+   }
+   .form-label {
+   font-weight: 500;
+   color: #6c757d;
+   margin-bottom: 6px;
+   }
+   /* 只读输入框样式（创建页暂未用到，保留以兼容） */
+   .form-control[readonly] {
+   background-color: #f8f9fa;
+   border-color: #e9ecef;
+   cursor: not-allowed;
+   }
+   /* 新增：唯一性提示样式 */
+   .form-text.text-warning {
+   font-size: 12px;
+   margin-top: 4px;
+   color: #fd7e14 !important;
+   }
+   /* 响应式适配 */
+   @media (max-width: 768px) {
+   .edit-card {
+   margin: 10px;
+   }
+   }
+</style>
+<div class="container-fluid">
+<!-- Bug创建卡片（复用edit-card类保证样式一致） -->
+<div class="edit-card border">
+   <div class="edit-title">
+      创建新Bug
+   </div>
+   <div class="edit-content">
+      <!-- 表单提交：保持和编辑页一致的POST/CSRF/Turbo配置 -->
+      <form method="post" data-turbo="false" novalidate>
+         {% csrf_token %}
+         <!-- 基础信息分组（和编辑页结构一致） -->
+         <div class="field-group">
+            <div class="field-group-title">基础信息</div>
+            <!-- Bug号：创建页改为可输入，增加唯一性提示 -->
+            <div class="mb-3">
+               <label for="bug_number" class="form-label">bug号 <span class="text-danger">*</span></label>
+               <input type="number" class="form-control" id="bug_number" name="bug_number"
+                  placeholder="请输入唯一的bug编号（数字）" required>
+               <div class="form-text text-warning">
+                  提示：bug号为唯一标识，不可重复
+               </div>
+            </div>
+            <!-- 标题：创建页无默认值，保留占位符 -->
+            <div class="mb-3">
+               <label for="title" class="form-label">bug标题</label>
+               <input type="text" class="form-control" id="title" name="title"
+                  placeholder="请输入bug标题">
+            </div>
+            <!-- 描述：创建页无默认值，保留占位符 -->
+            <div class="mb-3">
+               <label for="description" class="form-label">bug描述</label>
+               <input type="text" class="form-control" id="description" name="description"
+                  placeholder="请输入具体描述（最多500字）">
+            </div>
+         </div>
+         <!-- 状态信息分组（和编辑页结构一致） -->
+         <div class="field-group">
+            <div class="field-group-title">状态信息</div>
+            <div class="mb-3">
+               <label class="form-label">bug状态</label>
+               <!-- 表单渲染status下拉框，默认选中"processing（分析中）"（模型default已配置） -->
+               {{ form.status }}
+            </div>
+         </div>
+
+         <!-- 表单操作按钮：调整取消按钮跳转至列表页 -->
+         <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">创建Bug</button>
+            <!-- 替换为你的Bug列表页URL名称 -->
+            <a href="{% url 'problem_group:bug_list' %}" class="btn btn-outline-secondary">取消返回</a>
+         </div>
+      </form>
+   </div>
+</div>
+</div>
+{% endblock %}

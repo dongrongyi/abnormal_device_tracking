@@ -1,0 +1,81 @@
+{% extends 'viewflow/workflow/base_page.html' %}
+{% load group_filters %}
+
+{% block content %}
+<div class="mdc-layout-grid">
+  <div class="mdc-layout-grid__inner">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-8 mdc-layout-grid__cell--span-10-tablet" style="margin: 0 auto;">
+      <div class="mdc-card vf-card" style="margin: 24px 0; padding: 0;">
+        <!-- 卡片标题区 -->
+        <section class="mdc-card__primary" style="padding: 32px 24px 16px 24px; border-bottom: 1px solid #e0e0e0;">
+          <h1 class="mdc-card__title mdc-typography--headline5" style="margin: 0;">审核 - {{ node_name }}</h1>
+        </section>
+
+        <!-- 内容区 -->
+        <section class="mdc-card__supporting-text" style="padding: 24px;">
+          <!-- 操作记录 -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 500; color: #333;">操作记录</h3>
+
+            {% if operation_records %}
+            <div style="border-left: 2px solid #1976d2; padding-left: 16px;">
+              {% for record in operation_records %}
+              <div style="margin-bottom: 20px; padding: 16px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-weight: 500; color: #333; margin-bottom: 4px;">{{ record.action }}</div>
+                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">{{ record.created_at|date:"m-d H:i" }}</div>
+                {% if record.description %}
+                <div style="font-size: 14px; color: #555; line-height: 1.4;">{{ record.description }}</div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px 20px; color: #999; background: #fafafa; border-radius: 8px;">
+              暂无操作记录
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- 分析结果 -->
+          {% if analysis_result %}
+          <div style="margin-bottom: 32px;">
+            <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 500; color: #333;">分析结果</h3>
+
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+              <div style="display: flex; margin-bottom: 16px;">
+                <div style="width: 120px; font-weight: 500; color: #666;">分析说明:</div>
+                <div style="flex: 1; color: #333;">{{ analysis_result.analysis_notes }}</div>
+              </div>
+              <div style="display: flex;">
+                <div style="width: 120px; font-weight: 500; color: #666;">分析结果:</div>
+                <div style="flex: 1;">
+                  <span style="display: inline-block; padding: 4px 12px; background: #e8f5e8; color: #2e7d32; border-radius: 16px; font-size: 14px; font-weight: 500;">
+                    {{ analysis_result.result }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </section>
+
+        <!-- 操作按钮区 -->
+        <section class="mdc-card__actions" style="padding: 24px; background: #fafafa; border-top: 1px solid #e0e0e0;">
+          <form method="post" style="display: flex; gap: 12px;">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve" style="padding: 12px 24px; background: #388e3c; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">
+              通过
+            </button>
+            <button type="submit" name="action" value="reject" style="padding: 12px 24px; background: #d32f2f; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">
+              驳回
+            </button>
+            <a href="{% url 'deviceinvestigation:index' %}" style="padding: 12px 24px; background: #f5f5f5; color: #666; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; text-decoration: none; display: inline-flex; align-items: center;">
+              取消
+            </a>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

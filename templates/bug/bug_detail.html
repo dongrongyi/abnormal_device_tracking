@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}设备列表{% endblock %}
+{% block content %}
+    <style>
+        /* 自定义简洁样式，适配后台系统 */
+        .detail-card {
+            max-width: 1000px;
+            margin: 20px auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .detail-title {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .detail-content {
+            padding: 20px;
+        }
+        .field-group {
+            margin-bottom: 24px;
+        }
+        .field-group-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #212529;
+            border-left: 3px solid #0d6efd;
+            padding-left: 8px;
+        }
+        .field-row {
+            margin-bottom: 8px;
+        }
+        .field-label {
+            font-weight: 500;
+            color: #6c757d;
+            width: 120px;
+            display: inline-block;
+        }
+        .field-value {
+            color: #212529;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .field-label {
+                display: block;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+    <div class="container-fluid">
+        <!-- 设备详情卡片 -->
+        <div class="detail-card border">
+            <div class="detail-title">
+                bug详情 - {{ bug.bug_number|default:"未知bug" }}
+            </div>
+            <div class="detail-content">
+                <!-- 基础信息分组 -->
+                <div class="field-group">
+                    <div class="field-group-title">基础信息</div>
+                    <div class="field-row">
+                        <span class="field-label">bug号：</span>
+                        <span class="field-value">{{ bug.bug_number|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">标题：</span>
+                        <span class="field-value">{{ bug.title|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">描述：</span>
+                        <span class="field-value">{{ bug.description|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">状态：</span>
+                        <span class="field-value">{{ bug.status|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">创建人：</span>
+                        <span class="field-value">{{ bug.created_by|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">创建时间：</span>
+                        <span class="field-value">{{ bug.created_at|default:"--" }}</span>
+                    </div>
+                </div>
+
+
+                <!-- 返回按钮 -->
+                <div class="mt-4">
+                    <a href="{% url 'problem_group:bug_list' %}" class="btn btn-outline-secondary">返回列表</a>
+                    <!-- 可扩展编辑/删除按钮 -->
+                     <a href="{% url 'problem_group:bug_update' bug.pk %}" class="btn btn-primary ms-2">编辑</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+# 环境配置文件（敏感，必忽略）
+.env
+.env.dev
+.env.prod
+# SQLite数据库文件
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+# IPython缓存（无用）
+.ipynb_checkpoints/
+*.ipynb
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+# IDE配置
+.idea/
+# 临时文件
+*.md.bak
+datadump.json
+datadump_utf8.json
+# 脚本文件（非必要不传）
+convert_encoding.py
+build.sh
+# 其他
+action_record.md
+debug_mothod.md
+project_tree.txt

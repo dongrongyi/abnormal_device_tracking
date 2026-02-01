@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}创建新记录{% endblock %}
+{% block content %}
+<style>
+   /* 完全复用原有样式，保证视觉统一 */
+   .edit-card {
+   max-width: 1000px;
+   margin: 20px auto;
+   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   border-radius: 8px;
+   }
+   .edit-title {
+   padding: 16px 20px;
+   border-bottom: 1px solid #eee;
+   font-size: 18px;
+   font-weight: 600;
+   background-color: #f8f9fa;
+   border-top-left-radius: 8px;
+   border-top-right-radius: 8px;
+   }
+   .edit-content {
+   padding: 20px;
+   }
+   .field-group {
+   margin-bottom: 24px;
+   }
+   .field-group-title {
+   font-size: 16px;
+   font-weight: 500;
+   margin-bottom: 12px;
+   color: #212529;
+   border-left: 3px solid #0d6efd;
+   padding-left: 8px;
+   }
+   .form-label {
+   font-weight: 500;
+   color: #6c757d;
+   margin-bottom: 6px;
+   }
+   /* 只读输入框样式 */
+   .form-control[readonly] {
+   background-color: #f8f9fa;
+   border-color: #e9ecef;
+   cursor: not-allowed;
+   }
+   /* 响应式适配 */
+   @media (max-width: 768px) {
+   .edit-card {
+   margin: 10px;
+   }
+   }
+</style>
+<div class="container-fluid">
+<!-- 新记录创建卡片（复用原有样式类） -->
+<div class="edit-card border">
+   <div class="edit-title">
+      设备位置变更
+   </div>
+   <div class="edit-content">
+      <!-- 保持原有表单提交配置 -->
+      <form method="post" data-turbo="false" novalidate>
+         {% csrf_token %}
+         <!-- 基础信息分组（核心字段） -->
+         <div class="field-group">
+            <div class="field-group-title">基础信息</div>
+            <!-- 设备（输入框，必选，自动聚焦） -->
+            <div class="mb-3">
+               <span class="form-label">设备sn</span>
+               <!-- 改为输入框，添加autofocus自动聚焦、required必选、form-control样式 -->
+               <input type="text"
+                      class="form-control"
+                      id="{{ form.device.id_for_label }}"
+                      name="device"
+                      placeholder="扫码/输入设备sn"
+                      autofocus
+                      required>
+            </div>
+            <!-- 负责人（输入框，必选） -->
+            <div class="mb-3">
+               <span class="form-label">当前所有者工号</span>
+               <input type="text"
+                      class="form-control"
+                      id="{{ form.owner.id_for_label }}"
+                      name="owner"
+                      placeholder="扫码/输入负责人工号"
+                      required>
+            </div>
+            <!-- 位置信息（可选） -->
+            <div class="mb-3">
+               <label for="position" class="form-label">位置信息</label>
+               <input type="text" class="form-control" id="position" name="position"
+                  placeholder="扫码/输入位置信息（最多150字）">
+            </div>
+            <!-- 原因说明（可选） -->
+            <div class="mb-3">
+               <label for="reason" class="form-label">原因说明</label>
+               <input type="text" class="form-control" id="reason" name="reason"
+                  placeholder="请输入原因说明（最多150字）">
+            </div>
+         </div>
+
+         {% if form.errors %}
+            <div class="alert alert-danger">
+        {{ form.errors }}
+             </div>
+        {% endif %}
+
+         <!-- 表单操作按钮（调整文字，保留跳转逻辑） -->
+         <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">确认</button>
+            <!-- 替换为你的列表页URL名称 -->
+            <a href="{% url 'devices:device_list' %}" class="btn btn-outline-secondary">取消返回</a>
+         </div>
+      </form>
+   </div>
+</div>
+</div>
+{% endblock %}

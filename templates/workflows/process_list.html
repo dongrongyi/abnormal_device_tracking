@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}设备列表{% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Process列表</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="process_list" class="table table-bordered table-striped">
+            <thead>
+        <tr>
+            <th>流程编号</th>
+            <th>设备sn</th>
+            <th>当前节点</th>
+            <th>创建时间</th>
+            <th>聊天室</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in processes %}
+        <tr>
+            <td>{{ item.pk }}</td>
+            <td>{{ item.device.sn|default:"-" }}</td>
+            <td>{{ item.getCurrentNode|default:"-" }}</td>
+            <td>{{ item.created|default:"-" }}</td>
+            <td><a href="{% url 'chat:chatroom' item.pk %}">查看聊天室</a></td>
+            <td>
+                <a href="{% url 'process_detail' item.pk %}" class="btn btn-sm btn-info">
+                    流程详情
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+<!-- 2. 底部添加 DataTables 初始化脚本 -->
+<script>
+    $(document).ready(function() {
+  // 关键：销毁之前的初始化，避免重复
+  var table = $('#process_list').DataTable({
+    "destroy": true,  // 销毁之前的实例（防止重复初始化）
+    "paging": true,   // 启用分页（可根据需求关闭）
+    "searching": true, // 启用搜索框（可关闭：false）
+    "info": true      // 显示统计信息（可关闭：false）
+  });
+});
+</script>
+
+{% endblock %}
+
+

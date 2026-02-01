@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}设备列表{% endblock %}
+{% block content %}
+ <style>
+        /* 保持和详情页一致的基础样式 */
+        .edit-card {
+            max-width: 1000px;
+            margin: 20px auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .edit-title {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .edit-content {
+            padding: 20px;
+        }
+        .field-group {
+            margin-bottom: 24px;
+        }
+        .field-group-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #212529;
+            border-left: 3px solid #0d6efd;
+            padding-left: 8px;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 6px;
+        }
+        /* 只读输入框样式优化 */
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .edit-card {
+                margin: 10px;
+            }
+        }
+    </style>
+
+    <div class="container-fluid">
+        <!-- 设备编辑卡片 -->
+        <div class="edit-card border">
+            <div class="edit-title">
+                编辑设备 - {{ device.sn|default:"未知设备" }}
+            </div>
+            <div class="edit-content">
+                <!-- 表单提交：POST方法 + CSRF保护（Django必备） -->
+                <form method="post" data-turbo="false" novalidate>
+                    {% csrf_token %}
+
+                    <!-- 基础信息分组 -->
+                    <div class="field-group">
+                        <div class="field-group-title">基础信息</div>
+                        <div class="mb-3">
+                            <label for="sn" class="form-label">设备SN</label>
+                            <input type="text" class="form-control" id="sn" name="sn"
+                                   value="{{ device.sn|default:'' }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="project" class="form-label">专案</label>
+                            <input type="text" class="form-control" id="project" name="project"
+                                   value="{{ device.project|default:'' }}" placeholder="请输入专案名称">
+                        </div>
+                        <div class="mb-3">
+                            <label for="hardware_version" class="form-label">硬件版本</label>
+                            <input type="text" class="form-control" id="hardware_version" name="hardware_version"
+                                   value="{{ device.hardware_version|default:'' }}" placeholder="请输入硬件版本">
+                        </div>
+                        <div class="mb-3">
+                            <label for="software_version" class="form-label">软件版本</label>
+                            <input type="text" class="form-control" id="software_version" name="software_version"
+                                   value="{{ device.software_version|default:'' }}" placeholder="请输入软件版本">
+                        </div>
+                        <div class="mb-3">
+                            <label for="config" class="form-label">配置信息</label>
+                            <input type="text" class="form-control" id="config" name="config"
+                                   value="{{ device.config|default:'' }}" placeholder="请输入配置信息">
+                        </div>
+                    </div>
+
+                    <!-- 故障信息分组 -->
+                    <div class="field-group">
+                        <div class="field-group-title">故障信息</div>
+                        <div class="mb-3">
+                            <label for="fail_station" class="form-label">Fail测站</label>
+                            <input type="text" class="form-control" id="fail_station" name="fail_station"
+                                   value="{{ device.fail_station|default:'' }}" placeholder="请输入Fail测站">
+                        </div>
+                        <div class="mb-3">
+                            <label for="failure_mode" class="form-label">故障测项</label>
+                            <input type="text" class="form-control" id="failure_mode" name="failure_mode"
+                                   value="{{ device.failure_mode|default:'' }}" placeholder="请输入故障测项">
+                        </div>
+                        <div class="mb-3">
+                            <label for="test_link" class="form-label">测试链接</label>
+                            <input type="url" class="form-control" id="test_link" name="test_link"
+                                   value="{{ device.test_link|default:'' }}" placeholder="请输入测试链接（URL格式）">
+                        </div>
+                        <div class="mb-3">
+                            <!-- 方式1：单独渲染bug字段（推荐，样式可控） -->
+                            <label for="bug" class="form-label">关联Bug</label>
+                            {{ form.bug }}  <!-- 自动生成下拉框，包含所有Bug选项+默认选中当前值 -->
+                            {% if form.bug.errors %}
+                                <div class="text-danger mt-1">{{ form.bug.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 其他信息分组 -->
+                    <div class="field-group">
+                        <div class="field-group-title">其他信息</div>
+                        <div class="mb-3">
+                            <label for="current_position" class="form-label">当前位置</label>
+                            <input type="text" class="form-control" id="current_position" name="current_position"
+                                   value="{{ device.current_position|default:'' }}" placeholder="请输入当前位置">
+                        </div>
+                    </div>
+
+                    <!-- 表单操作按钮 -->
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">保存修改</button>
+                        <a href="{% url 'devices:device_detail' device.pk %}" class="btn btn-outline-secondary">取消返回</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

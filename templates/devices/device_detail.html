@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}设备列表{% endblock %}
+{% block content %}
+    <style>
+        /* 自定义简洁样式，适配后台系统 */
+        .detail-card {
+            max-width: 1000px;
+            margin: 20px auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .detail-title {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .detail-content {
+            padding: 20px;
+        }
+        .field-group {
+            margin-bottom: 24px;
+        }
+        .field-group-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #212529;
+            border-left: 3px solid #0d6efd;
+            padding-left: 8px;
+        }
+        .field-row {
+            margin-bottom: 8px;
+        }
+        .field-label {
+            font-weight: 500;
+            color: #6c757d;
+            width: 120px;
+            display: inline-block;
+        }
+        .field-value {
+            color: #212529;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .field-label {
+                display: block;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+    <div class="container-fluid">
+        <!-- 设备详情卡片 -->
+        <div class="detail-card border">
+            <div class="detail-title">
+                设备详情 - {{ device.sn|default:"未知设备" }}
+            </div>
+            <div class="detail-content">
+                <!-- 基础信息分组 -->
+                <div class="field-group">
+                    <div class="field-group-title">基础信息</div>
+                    <div class="field-row">
+                        <span class="field-label">设备SN：</span>
+                        <span class="field-value">{{ device.sn|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">专案：</span>
+                        <span class="field-value">{{ device.project|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">硬件版本：</span>
+                        <span class="field-value">{{ device.hardware_version|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">软件版本：</span>
+                        <span class="field-value">{{ device.software_version|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">配置信息：</span>
+                        <span class="field-value">{{ device.config|default:"--" }}</span>
+                    </div>
+                </div>
+
+                <!-- 故障信息分组 -->
+                <div class="field-group">
+                    <div class="field-group-title">故障信息</div>
+                    <div class="field-row">
+                        <span class="field-label">Fail测站：</span>
+                        <span class="field-value">{{ device.fail_station|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">故障测项：</span>
+                        <span class="field-value">{{ device.failure_mode|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">测试链接：</span>
+                        <span class="field-value">
+                            {% if device.test_link %}
+                                <a href="{{ device.test_link }}" target="_blank">{{ device.test_link }}</a>
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">关联Bug：</span>
+                        <span class="field-value">
+                            {% if device.bug %}
+                                <!-- 假设Bug模型有name/id字段，可根据实际调整 -->
+                                b/{{ device.bug.bug_number }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 其他信息分组 -->
+                <div class="field-group">
+                    <div class="field-group-title">其他信息</div>
+                    <div class="field-row">
+                        <span class="field-label">当前位置：</span>
+                        <span class="field-value">{{ device.current_position|default:"--" }}</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">创建时间：</span>
+                        <span class="field-value">
+                            {% if device.created_at %}
+                                {{ device.created_at|date:"Y-m-d H:i:s" }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 返回按钮 -->
+                <div class="mt-4">
+                    <a href="{% url 'devices:device_list' %}" class="btn btn-outline-secondary">返回列表</a>
+                    <!-- 可扩展编辑/删除按钮 -->
+                     <a href="{% url 'devices:device_update' device.pk %}" class="btn btn-primary ms-2">编辑</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

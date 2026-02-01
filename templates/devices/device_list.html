@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}设备列表{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">异常设备列表</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="device_list" class="table table-bordered table-striped">
+            <thead>
+        <tr>
+            <th>设备SN</th>
+            <th>专案</th>
+            <th>硬件版本</th>
+            <th>fail测站</th>
+            <th>fail测项</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in devices %}
+        <tr>
+            <td>{{ item.sn }}</td>
+            <td>{{ item.project|default:"-" }}</td>
+            <td>{{ item.hardware_version|default:"-" }}</td>
+            <td>{{ item.fail_station|default:"-" }}</td>
+            <td>{{ item.failure_mode|default:"-" }}</td>
+            <td>
+                {% if item.workflow_processes %}
+                <a href="{% url 'deviceinvestigation:process_detail' item.workflow_processes.first.id %}" class="btn btn-sm btn-info">
+                    查看流程
+                </a>
+                {% else %}
+                <a href="{% url 'deviceinvestigation:start:execute' %}" class="btn btn-sm btn-primary">
+                    开始流程
+                </a>
+                {% endif %}
+                <a href="{% url 'devices:device_detail' item.pk %}" class="btn btn-sm btn-primary">
+                    查看详情
+                </a>
+                <a href="{% url 'devices:device_update' item.pk %}" class="btn btn-sm btn-primary">
+                    编辑设备
+                </a>
+                <a href="{% url 'devices:position_tracking' item.pk %}" class="btn btn-sm btn-primary">
+                    位置变更状况
+                </a>
+                <a href="{% url 'chat:chatroom' item.workflow_processes.first.id %}" class="btn btn-sm btn-primary">
+                    查看聊天室
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+        </table>
+    </div>
+</div>
+<!--  DataTables 初始化 -->
+<script>
+    $(document).ready(function() {
+  // 关键：销毁之前的初始化，避免重复
+  var table = $('#device_list').DataTable({
+    "destroy": true,  // 销毁之前的实例（防止重复初始化）
+    "paging": true,   // 启用分页（可根据需求关闭）
+    "searching": true, // 启用搜索框（可关闭：false）
+    "info": true      // 显示统计信息（可关闭：false）
+  });
+});
+</script>
+{% endblock %}
